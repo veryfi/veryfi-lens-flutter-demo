@@ -1,0 +1,33 @@
+PODS:
+  - AWSCore (2.26.2)
+  - AWSS3 (2.26.2):
+    - AWSCore (= 2.26.2)
+  - Flutter (1.0.0)
+  - veryfi (1.6.3.0):
+    - AWSS3
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - veryfi (from `.symlinks/plugins/veryfi/ios`)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AWSCore
+    - AWSS3
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  veryfi:
+    :path: ".symlinks/plugins/veryfi/ios"
+
+SPEC CHECKSUMS:
+  AWSCore: dd7f74ab3f354aad435f83afdbfac91bcb7d44c2
+  AWSS3: cad52255a6cfa4ef7bd1abc95a726d8670f141c8
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  veryfi: 5c76162b2db258d50b0830b98f0cc79d22fb36a1
+
+PODFILE CHECKSUM: 85bbb98cbff9ece8e0b61e08d6d854175c91702c
+
+COCOAPODS: 1.11.3
