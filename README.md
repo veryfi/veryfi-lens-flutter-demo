@@ -33,6 +33,12 @@ export MAVEN_VERYFI_PASSWORD=[PASSWORD]
 - Replace [USERNAME] and [PASSWORD] with the credentials that were set up in the previous step.
 - Fetch the dependencies using your IDE or run `flutter pub get`
 
+- Note: The wrapper supports the following Flutter SDK versions:
+```
+flutter: ">=1.20.0"
+```
+
+
 - Replace credentials in `main.dart` with yours
 ```
 Map<String, dynamic> credentials = {
