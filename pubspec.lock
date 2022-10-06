@@ -55,6 +55,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -147,8 +154,8 @@ packages:
     description:
       path: "."
       ref: "1.2.1"
-      resolved-ref: "51bd4fcb2b655bd34728c711f119e4d3be53e04d"
-      url: "https://devapitest-sebastin-giraldogmez:rs6nxztn5nzqLX5-zxai@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git"
+      resolved-ref: b4034a0435871721d23074bc43bb8fc26fffd0fd
+      url: "https://devapitest-sebastin-giraldogomez:L8d_Hsj9i6M_ZSjYrTCf@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git"
     source: git
     version: "1.2.1"
 sdks:
