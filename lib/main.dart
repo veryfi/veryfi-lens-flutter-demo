@@ -9,7 +9,11 @@ import 'package:flutter/services.dart';
 /// [veryfi-packages]
 import 'package:veryfi/lens.dart';
 
-void main() {
+/// [third-party-packages]
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+void main() async {
+  await dotenv.load();
   runApp(MyApp());
 }
 
@@ -30,10 +34,13 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     Map<String, dynamic> credentials = {
-      'clientId': 'XXXX', //Replace with your clientId
-      'userName': 'XXXX', //Replace with your username
-      'apiKey': 'XXXX', //Replace with your apiKey
-      'url': 'XXXX' //Replace with your url
+      'clientId':
+          dotenv.env['VERYFI_CLIENT_ID'] ?? 'XXXX', //Replace with your clientId
+      'userName':
+          dotenv.env['VERYFI_USERNAME'] ?? 'XXXX', //Replace with your username
+      'apiKey':
+          dotenv.env['VERYFI_API_KEY'] ?? 'XXXX', //Replace with your apiKey
+      'url': dotenv.env['VERYFI_URL'] ?? 'XXXX' //Replace with your url
     };
 
     Map<String, dynamic> settings = {
@@ -55,12 +62,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true
-      ),
+      theme: ThemeData(useMaterial3: true),
+      darkTheme: ThemeData(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Veryfi Lens Wrapper'),
