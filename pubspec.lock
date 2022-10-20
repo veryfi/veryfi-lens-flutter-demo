@@ -153,11 +153,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "1.2.1"
-      resolved-ref: b4034a0435871721d23074bc43bb8fc26fffd0fd
-      url: "https://devapitest-sebastin-giraldogomez:L8d_Hsj9i6M_ZSjYrTCf@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git"
+      ref: "1.2.2"
+      resolved-ref: "0467cfccee937419fc8683187399bfe8ec3e2ab1"
+      url: "https://devapitest-sebastin-giraldogmez:4DcN6gwJLYxJ1ndxeVGx@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git"
     source: git
-    version: "1.2.1"
+    version: "1.2.2"
 sdks:
   dart: ">=2.17.0-0 <3.0.0"
   flutter: ">=1.20.0"
