@@ -1,0 +1,10 @@
+
+
+storage_mode("git")
+
+git_url("git@gitlab.services.veryfi.com:manhattan/mobile/veryfi-ios-certificates.git")
+
+type("appstore")
+
+app_identifier(["com.veryfi.lensdemo.flutter"])
+username("cicd@veryfi.com")
