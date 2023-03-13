@@ -18,7 +18,7 @@ dependencies:
   veryfi:
     git:
       url: https://[USERNAME]:[PASSWORD]@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git
-      ref: 1.3.8
+      ref: 1.3.9
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
