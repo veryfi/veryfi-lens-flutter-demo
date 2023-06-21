@@ -38,8 +38,8 @@ android {
         applicationId "com.veryfi.flutter_example"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 11
+        versionName "1.5.3"
     }
 
     buildTypes {
