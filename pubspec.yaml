@@ -10,6 +10,7 @@ environment:
   sdk: ">=3.2.3 <4.0.0"
 
 dependencies:
+  lottie: ^2.7.0
   flutter:
     sdk: flutter
 
@@ -49,6 +50,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
+    - assets/loading_animation.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
