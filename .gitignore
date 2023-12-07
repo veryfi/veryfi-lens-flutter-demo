@@ -47,3 +47,6 @@ app.*.map.json
 
 # Env variables
 .env
+
+#pubspeck.lock file
+pubspec.lock

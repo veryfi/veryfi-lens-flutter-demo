@@ -53,6 +53,17 @@ Map<String, dynamic> credentials = {
 };
 ```
 
+We are using [flutter_dotenv](https://pub.dev/packages/flutter_dotenv), that means that you need to create a [.env] file in the root of your flutter 
+project if you want keep safe your credentials in your personal project, if not, please remove the next declaration inside the [pubspec.yml].
+
+```
+# To add assets to your application, add an assets section, like this:
+  assets:
+    - .env
+```
+
+
+
 ### iOS Localization (Optional) <a name="localization"></a>
 - In order to be able to enable iOS Lens native localization you need to enable a supported language on the project file:
 ![Step 1](https://raw.githubusercontent.com/veryfi/veryfi-lens-react-native-demo/main/github_assets/localization-step1.png)
