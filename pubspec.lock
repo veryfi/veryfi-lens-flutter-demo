@@ -182,7 +182,7 @@ packages:
       path: "."
       ref: "1.3.7"
       resolved-ref: a4cc309f8c2f241ca2c37194291b9714d081b13f
-      url: "https://devapitest-sergio-ramrez:sXzHgnspGL48zyWy4tqw@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git"
+      url: "https://repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git"
     source: git
     version: "1.3.7"
 sdks:
