@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:veryfi/lens.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter_json_view/flutter_json_view.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -17,9 +18,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   ExtractedData? _extractedData;
-  String? _jsonString;
   bool _isLoading = false;
   late TabController _tabController;
+  Map<String, dynamic> _eventData = {};
 
   @override
   void initState() {
@@ -64,10 +65,19 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Color(0xFFE9ECE4),
         appBar: AppBar(
+          backgroundColor: Color(0xFFE9ECE4),
           title: Text('Veryfi Lens Wrapper'),
           bottom: TabBar(
+            indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Color(0xFF00FA6C),
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Color(0xFF00FA6C),
+            ),
             tabs: [
               Tab(text: 'Extracted Data'),
               Tab(text: 'JSON'),
@@ -95,11 +105,21 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   void onShowCameraPressed() async {
-    setState(() { _isLoading = true; });
     await Veryfi.showCamera();
   }
 
   void handleVeryfiEvent(LensEvent eventType, Map<String, dynamic> response) {
+    setState(() {
+      String eventName = eventType.toString().split('.').last;
+      _eventData[eventName] ??= [];
+      _eventData[eventName].add({
+        'status': response['status'],
+        'msg': response['msg'],
+        'data': response['data'],
+      });
+
+      // ... resto del manejo de estados ...
+    });
     if (eventType == LensEvent.update) {
       var status = response['status'];
       if (status == 'start') {
@@ -109,7 +129,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       }
     } else if (eventType == LensEvent.success) {
       setState(() {
-        _jsonString = response['data'].toString();
         _extractedData = ExtractedData.fromJson(Map<String, dynamic>.from(response['data']));
       });
     } else if (eventType == LensEvent.close) {
@@ -138,9 +157,23 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildJsonDataView() {
-    if (_jsonString == null) return Center(child: Text('No JSON data'));
-    return SingleChildScrollView(
-      child: Text(_jsonString ?? 'No JSON data'),
+    if (_eventData.isEmpty) {
+      return Center(child: Text('No data'));
+    }
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: constraints.maxWidth,
+            ),
+            child: JsonView.map(
+              _eventData,
+            ),
+          ),
+        );
+      },
     );
   }
 
