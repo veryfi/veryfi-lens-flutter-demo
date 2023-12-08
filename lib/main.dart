@@ -26,9 +26,17 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabSelection);
     initPlatformState();
     Veryfi.setDelegate(handleVeryfiEvent);
   }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
 
   Future<void> initPlatformState() async {
     Map<String, dynamic> credentials = {
@@ -66,24 +74,49 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Color(0xFFE9ECE4),
-        appBar: AppBar(
-          backgroundColor: Color(0xFFE9ECE4),
-          title: Text('Veryfi Lens Wrapper'),
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            controller: _tabController,
-            labelColor: Colors.white,
-            unselectedLabelColor: Color(0xFF00FA6C),
-            indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Color(0xFF00FA6C),
+          appBar: AppBar(
+            backgroundColor: Color(0xFFE9ECE4),
+            title: Image.asset('assets/ic_veryfi_logo_black.PNG', fit: BoxFit.contain, height: 120,),
+            bottom: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+                color: _tabController.index == 0 ? Color(0xFF00FA6C) : Colors.transparent,
+              ),
+              tabs: [
+                Tab(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                      color: _tabController.index == 0 ? Color(0xFF00FA6C) : Color(0xFF002108),
+                    ),
+                    child: Text(
+                      'Extracted Data',
+                      style: TextStyle(
+                        color: _tabController.index == 0 ? Colors.white : Color(0xFF00FA6C),
+                      ),
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                      color: _tabController.index == 1 ? Color(0xFF00FA6C) : Color(0xFF002108),
+                    ),
+                    child: Text(
+                      'JSON',
+                      style: TextStyle(
+                        color: _tabController.index == 1 ? Colors.white : Color(0xFF00FA6C),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            tabs: [
-              Tab(text: 'Extracted Data'),
-              Tab(text: 'JSON'),
-            ],
           ),
-        ),
         body: Stack(
           children: [
             TabBarView(
@@ -104,6 +137,12 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     );
   }
 
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) {
+      setState(() {});
+    }
+  }
+
   void onShowCameraPressed() async {
     await Veryfi.showCamera();
   }
@@ -117,9 +156,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         'msg': response['msg'],
         'data': response['data'],
       });
-
-      // ... resto del manejo de estados ...
     });
+
     if (eventType == LensEvent.update) {
       var status = response['status'];
       if (status == 'start') {
@@ -158,7 +196,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   Widget _buildJsonDataView() {
     if (_eventData.isEmpty) {
-      return Center(child: Text('No data'));
+      return Center(child: Text('No JSON data'));
     }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
