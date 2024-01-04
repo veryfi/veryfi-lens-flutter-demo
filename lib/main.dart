@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:veryfi/lens.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lottie/lottie.dart';
-import 'package:flutter_json_view/flutter_json_view.dart';
+import 'package:json_shrink_widget/json_shrink_widget.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -115,7 +115,10 @@ class _MyHomePageState extends State<MyHomePage>
     } else if (eventType == LensEvent.close) {
       var queueCount = response['queue_count'] ?? 0;
       if (queueCount == 0) {
-        setState(() => _isLoading = false);
+        setState(() {
+          _isLoading = false;
+          showVeryfiResults = false;
+        });
       }
     }
 
@@ -153,12 +156,15 @@ class _MyHomePageState extends State<MyHomePage>
               ),
             ),
           ),
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildExtractedDataView(),
-              _buildJsonDataView(),
-            ],
+          body: Container(
+            color: const Color(0xFFE9ECE4),
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildExtractedDataView(),
+                _buildJsonDataView(),
+              ],
+            ),
           ),
         ),
         if (_isLoading) _buildLoadingScreen(),
@@ -170,13 +176,13 @@ class _MyHomePageState extends State<MyHomePage>
     return TextButton(
       onPressed: () {
         setState(() {
-          _tabController.animateTo(index); // Cambia el índice actual del TabController
+          _tabController.animateTo(index);
         });
       },
       style: TextButton.styleFrom(
         backgroundColor: _tabController.index == index
-            ? const Color(0xFF00FA6C) // Fondo cuando está seleccionado
-            : const Color(0xFF002108), // Fondo cuando no está seleccionado
+            ? const Color(0xFF00FA6C)
+            : const Color(0xFF002108),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
@@ -185,8 +191,8 @@ class _MyHomePageState extends State<MyHomePage>
         text,
         style: TextStyle(
           color: _tabController.index == index
-              ? const Color(0xFFE9ECE4) // Color cuando está seleccionado
-              : const Color(0xFF00FA6C), // Color cuando no está seleccionado
+              ? const Color(0xFFE9ECE4)
+              : const Color(0xFF00FA6C),
         ),
       ),
     );
@@ -365,31 +371,39 @@ class _MyHomePageState extends State<MyHomePage>
     if (_extractedData == null) {
       return const Center(child: Text('No extracted data'));
     }
-    return ListView(
-      children: [
-        ListTile(title: Text('ID: ${_extractedData?.id ?? "Not available"}')),
-        ListTile(
-            title: Text(
-                'Invoice Number: ${_extractedData?.invoiceNumber ?? "Not available"}')),
-        ListTile(
-            title: Text(
-                'Currency Code: ${_extractedData?.currencyCode ?? "Not available"}')),
-        ListTile(
-            title: Text(
-                'Tax: ${_extractedData?.tax?.toStringAsFixed(2) ?? "Not available"}')),
-        ListTile(
-            title: Text(
-                'Category: ${_extractedData?.category ?? "Not available"}')),
-        ListTile(
-            title: Text(
-                'Image File Name: ${_extractedData?.imgFileName ?? "Not available"}')),
-        ListTile(
-            title: Text(
-                'Reference: ${_extractedData?.reference ?? "Not available"}')),
-        ListTile(
-            title: Text(
-                'Created Date: ${_extractedData?.createdDate ?? "Not available"}')),
-      ],
+    return Card(
+      elevation: 10,
+      margin: const EdgeInsets.all(12.0),
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: ListView(
+        children: [
+          ListTile(title: Text('ID: ${_extractedData?.id ?? "Not available"}')),
+          ListTile(
+              title: Text(
+                  'Invoice Number: ${_extractedData?.invoiceNumber ?? "Not available"}')),
+          ListTile(
+              title: Text(
+                  'Currency Code: ${_extractedData?.currencyCode ?? "Not available"}')),
+          ListTile(
+              title: Text(
+                  'Tax: ${_extractedData?.tax?.toStringAsFixed(2) ?? "Not available"}')),
+          ListTile(
+              title: Text(
+                  'Category: ${_extractedData?.category ?? "Not available"}')),
+          ListTile(
+              title: Text(
+                  'Image File Name: ${_extractedData?.imgFileName ?? "Not available"}')),
+          ListTile(
+              title: Text(
+                  'Reference: ${_extractedData?.reference ?? "Not available"}')),
+          ListTile(
+              title: Text(
+                  'Created Date: ${_extractedData?.createdDate ?? "Not available"}')),
+        ],
+      ),
     );
   }
 
@@ -400,19 +414,33 @@ class _MyHomePageState extends State<MyHomePage>
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minWidth: constraints.maxWidth,
-            ),
-            child: JsonView.map(
-              _eventData,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: constraints.maxWidth,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: JsonShrinkWidget(
+                  style: const JsonShrinkStyle(
+                      textStyle: TextStyle(color: Colors.black),
+                      keyStyle: TextStyle(color: Colors.black),
+                      numberStyle: TextStyle(color: Colors.black),
+                      boolStyle: TextStyle(color: Colors.black),
+                      symbolStyle: TextStyle()
+                  ),
+                  json: _eventData,
+                ),
+              ),
             ),
           ),
         );
       },
     );
   }
+
+
 
   Widget _buildLoadingScreen() {
     return Container(
@@ -424,7 +452,7 @@ class _MyHomePageState extends State<MyHomePage>
             SizedBox(
                 height: 120,
                 child: Image.asset('assets/ic_veryfi_logo_black.PNG')),
-            const Text('Reading document...', style: TextStyle(fontSize: 20)),
+            const Text('Please wait.. reading document.', style: TextStyle(fontSize: 20)),
             Lottie.asset('assets/loading_animation.json'),
           ],
         ),
