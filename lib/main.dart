@@ -149,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage>
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: _buildButton(1, 'JSON'),
+                      child: _buildButton(1, 'Json'),
                     ),
                   ],
                 ),
@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage>
       },
       style: TextButton.styleFrom(
         backgroundColor: _tabController.index == index
-            ? const Color(0xFF00FA6C)
+            ? const Color(0xFF00AA00)
             : const Color(0xFF002108),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
@@ -192,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage>
         style: TextStyle(
           color: _tabController.index == index
               ? const Color(0xFFE9ECE4)
-              : const Color(0xFF00FA6C),
+              : const Color(0xFF00AA00),
         ),
       ),
     );
@@ -324,11 +324,11 @@ class _MyHomePageState extends State<MyHomePage>
         SizedBox(
             height: 120, child: Image.asset('assets/ic_veryfi_logo_black.PNG')),
         Card(
-          elevation: 10,
+          elevation: 2,
           margin: const EdgeInsets.all(12.0),
           color: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
+            borderRadius: BorderRadius.circular(7.0),
           ),
           child: SizedBox(
             height: 550,
@@ -371,41 +371,80 @@ class _MyHomePageState extends State<MyHomePage>
     if (_extractedData == null) {
       return const Center(child: Text('No extracted data'));
     }
-    return Card(
-      elevation: 10,
+
+    return Container(
       margin: const EdgeInsets.all(12.0),
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.green,
+          width: 1,
+        ),
         borderRadius: BorderRadius.circular(5.0),
       ),
-      child: ListView(
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5.0),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                'Extracted fields',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            _buildListTile('ID', _extractedData?.id ?? "Not available"),
+            _buildListTile('Invoice Number', _extractedData?.invoiceNumber ?? "Not available"),
+            _buildListTile('Currency Code', _extractedData?.currencyCode ?? "Not available"),
+            _buildListTile('Tax', _extractedData?.tax?.toStringAsFixed(2) ?? "Not available"),
+            _buildListTile('Category', _extractedData?.category ?? "Not available"),
+            _buildListTile('Image File Name', _extractedData?.imgFileName ?? "Not available"),
+            _buildListTile('Reference', _extractedData?.reference ?? "Not available"),
+            _buildListTile('Created Date', _extractedData?.createdDate ?? "Not available"),
+            _buildListTile('Thumbnail Url', _extractedData?.imgThumbNail ?? "Not available"),
+            _buildListTile('Image Url', _extractedData?.imgUrl ?? "Not available"),
+            _buildListTile('Pdf url', _extractedData?.pdfUrl ?? "Not available"),
+            _buildListTile('Reference Number', _extractedData?.referenceNumber ?? "Not available"),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildListTile(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 11.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(title: Text('ID: ${_extractedData?.id ?? "Not available"}')),
-          ListTile(
-              title: Text(
-                  'Invoice Number: ${_extractedData?.invoiceNumber ?? "Not available"}')),
-          ListTile(
-              title: Text(
-                  'Currency Code: ${_extractedData?.currencyCode ?? "Not available"}')),
-          ListTile(
-              title: Text(
-                  'Tax: ${_extractedData?.tax?.toStringAsFixed(2) ?? "Not available"}')),
-          ListTile(
-              title: Text(
-                  'Category: ${_extractedData?.category ?? "Not available"}')),
-          ListTile(
-              title: Text(
-                  'Image File Name: ${_extractedData?.imgFileName ?? "Not available"}')),
-          ListTile(
-              title: Text(
-                  'Reference: ${_extractedData?.reference ?? "Not available"}')),
-          ListTile(
-              title: Text(
-                  'Created Date: ${_extractedData?.createdDate ?? "Not available"}')),
+          Expanded(
+            flex: 2,
+            child: Text(
+              title,
+              style: const TextStyle(color: Colors.black),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.right,
+            ),
+          ),
         ],
       ),
     );
   }
+
+
 
   Widget _buildJsonDataView() {
     if (_eventData.isEmpty) {
@@ -470,6 +509,11 @@ class ExtractedData {
   String? imgFileName;
   String? reference;
   String? createdDate;
+  String? imgThumbNail;
+  String? imgUrl;
+  String? pdfUrl;
+  String? referenceNumber;
+
 
   ExtractedData({
     this.id,
@@ -480,6 +524,10 @@ class ExtractedData {
     this.imgFileName,
     this.reference,
     this.createdDate,
+    this.imgThumbNail,
+    this.imgUrl,
+    this.pdfUrl,
+    this.referenceNumber
   });
 
   factory ExtractedData.fromJson(Map<String, dynamic> json) {
@@ -492,6 +540,10 @@ class ExtractedData {
       imgFileName: json['img_file_name'],
       reference: json['reference_number'],
       createdDate: json['created_date'],
+      imgThumbNail: json['img_thumbnail_url'].toString(),
+      imgUrl: json['img_url'].toString(),
+      pdfUrl: json['pdf_url'].toString(),
+      referenceNumber: json['reference_number'].toString(),
     );
   }
 }
