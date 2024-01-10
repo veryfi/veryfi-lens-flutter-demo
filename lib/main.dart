@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:veryfi/lens.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:lottie/lottie.dart';
-import 'package:json_shrink_widget/json_shrink_widget.dart';
+import 'dart:convert';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -68,14 +68,8 @@ class _MyHomePageState extends State<MyHomePage>
       'url': dotenv.env['VERYFI_URL'] ?? 'YourUrl',
     };
 
-    Map<String, dynamic> settings = {
-      'blurDetectionIsOn': false,
-      'showDocumentTypes': true,
-      'documentTypes': ['long_receipt']
-    };
-
     try {
-      await Veryfi.initLens(credentials, settings);
+      await Veryfi.initLens(credentials, preferences);
       startListeningEvents();
     } on PlatformException catch (e) {
       print("Failed to initialize Veryfi: ${e.message}");
@@ -136,7 +130,16 @@ class _MyHomePageState extends State<MyHomePage>
       children: [
         Scaffold(
           appBar: AppBar(
+            title: const Text('Lens console'),
             backgroundColor: const Color(0xFFE9ECE4),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                setState(() {
+                  showVeryfiResults = false;
+                });
+              },
+            ),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(50.0),
               child: Padding(
@@ -182,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage>
       style: TextButton.styleFrom(
         backgroundColor: _tabController.index == index
             ? const Color(0xFF00AA00)
-            : const Color(0xFF002108),
+            : const Color(0xFF173835),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
@@ -192,13 +195,11 @@ class _MyHomePageState extends State<MyHomePage>
         style: TextStyle(
           color: _tabController.index == index
               ? const Color(0xFFE9ECE4)
-              : const Color(0xFF00AA00),
+              : const Color(0xFF00FA6C),
         ),
       ),
     );
   }
-
-
 
   String getSettingsForDocumentType(String documentType) {
     switch (documentType) {
@@ -241,8 +242,18 @@ class _MyHomePageState extends State<MyHomePage>
     var documentTypeResult = getSettingsForDocumentType(documentType);
 
     Map<String, dynamic> settings = {
-      'blurDetectionIsOn': false,
-      'showDocumentTypes': true,
+      'blurDetectionIsOn': preferences['Blur detection'],
+      'showDocumentTypes': preferences['Show document types'],
+      'glareDetectionIsOn': preferences['Glare Detection'],
+      'autoLightDetectionIsOn': preferences['Auto Light Detection'],
+      'multipleDocumentsIsOn': preferences['Multiple documents'],
+      'multiplePagesCaptureIsOn': preferences['Multiple pages'],
+      'allowSubmitUndetectedDocsIsOn':
+          preferences['Allow submit undetected docs'],
+      'autoSubmitDocumentOnCapture':
+          preferences['Allow submit document capture'],
+      'zoomIsOn': preferences['Zoom'],
+      'switchCameraIsOn': preferences['Switch Camera'],
       'documentTypes': [documentTypeResult]
     };
 
@@ -323,47 +334,167 @@ class _MyHomePageState extends State<MyHomePage>
         const SizedBox(height: 20),
         SizedBox(
             height: 120, child: Image.asset('assets/ic_veryfi_logo_black.PNG')),
-        Card(
-          elevation: 2,
+        Container(
           margin: const EdgeInsets.all(12.0),
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
+          child: Material(
+            color: Colors.white,
+            elevation: 10,
             borderRadius: BorderRadius.circular(7.0),
-          ),
-          child: SizedBox(
-            height: 550,
-            child: ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'Solutions',
-                      style: TextStyle(
-                          fontSize: 15.0, fontWeight: FontWeight.bold),
+            child: SizedBox(
+              height: 530,
+              child: ListView(
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        'Solutions',
+                        style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF171C3A)),
+                      ),
                     ),
                   ),
-                ),
-                ...menuOptions.map((option) => Padding(
-                      padding: EdgeInsets.zero,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(option['icon'], size: 24.0),
-                        title: Text(
-                          option['title'],
-                          style: const TextStyle(fontSize: 14.0),
+                  ...menuOptions.map((option) => Padding(
+                        padding: EdgeInsets.zero,
+                        child: ListTile(
+                          dense: true,
+                          leading: Icon(
+                            option['icon'],
+                            size: 24.0,
+                            color: const Color(0xFF171C3A),
+                          ),
+                          title: Text(
+                            option['title'],
+                            style: const TextStyle(
+                                fontSize: 14.0, color: Color(0xFF171C3A)),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.settings, size: 27.0,color: Color(0xFF171C3A),),
+                            onPressed: _showSettingsPanel,
+                          ),
+                          onTap: () => onShowCameraPressed(option['title']),
                         ),
-                        trailing: const Icon(Icons.settings, size: 20.0),
-                        onTap: () => onShowCameraPressed(option['title']),
-                      ),
-                    )),
-              ],
+                      )),
+                ],
+              ),
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Map<String, bool> preferences = {
+    'Blur detection': false,
+    'Show document types': true,
+    'Glare Detection': true,
+    'Auto Light Detection': true,
+    'Stitch': false,
+    'Multiple documents': true,
+    'Multiple pages': true,
+    'Allow submit undetected docs': true,
+    'Allow submit document capture': false,
+    'Switch Camera': false,
+    'Zoom': false,
+  };
+
+  void _showSettingsPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(0)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return DraggableScrollableSheet(
+              expand: false,
+              builder: (_, controller) {
+                return Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Settings',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20.0, color: Color(0xFF171C3A)),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Material(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(5.0)),
+                            color: const Color(0xFFE9ECE4),
+                            elevation: 2.0,
+                            child: Column(
+                              children: [
+                                const ListTile(
+                                  leading: Icon(Icons.settings, size: 24.0,color: Color(0xFF171C3A)),
+                                  title: Text('General Settings',style: TextStyle(color: Color(0xFF171C3A)),),
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    controller: controller,
+                                    itemCount: preferences.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      String key =
+                                          preferences.keys.elementAt(index);
+                                      return _customSwitchListTile(
+                                        key,
+                                        preferences[key]!,
+                                        (bool value) {
+                                          setState(() {
+                                            preferences[key] = value;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _customSwitchListTile(
+      String title, bool value, ValueChanged<bool> onChanged) {
+    return ListTile(
+      title: Text(title,style: const TextStyle(color: Color(0xFF171C3A)),),
+      trailing: Transform.scale(
+        scale: 0.7,
+        child: Switch(
+          value: value,
+          onChanged: (newValue) {
+            onChanged(newValue);
+          },
+          activeColor: const Color(0xFF171C3A),
+        ),
+      ),
+      onTap: () {
+        onChanged(!value);
+      },
     );
   }
 
@@ -376,12 +507,13 @@ class _MyHomePageState extends State<MyHomePage>
       margin: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Colors.green,
+          color: Colors.grey,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Material(
+        elevation: 10,
         color: Colors.white,
         borderRadius: BorderRadius.circular(5.0),
         child: ListView(
@@ -394,29 +526,42 @@ class _MyHomePageState extends State<MyHomePage>
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
+                  color: Color(0xFF171C3A)
                 ),
               ),
             ),
             _buildListTile('ID', _extractedData?.id ?? "Not available"),
-            _buildListTile('Invoice Number', _extractedData?.invoiceNumber ?? "Not available"),
-            _buildListTile('Currency Code', _extractedData?.currencyCode ?? "Not available"),
-            _buildListTile('Tax', _extractedData?.tax?.toStringAsFixed(2) ?? "Not available"),
-            _buildListTile('Category', _extractedData?.category ?? "Not available"),
-            _buildListTile('Image File Name', _extractedData?.imgFileName ?? "Not available"),
-            _buildListTile('Reference', _extractedData?.reference ?? "Not available"),
-            _buildListTile('Created Date', _extractedData?.createdDate ?? "Not available"),
-            _buildListTile('Thumbnail Url', _extractedData?.imgThumbNail ?? "Not available"),
-            _buildListTile('Image Url', _extractedData?.imgUrl ?? "Not available"),
-            _buildListTile('Pdf Url', _extractedData?.pdfUrl ?? "Not available"),
-            _buildListTile('Store Number', _extractedData?.storeNumber ?? "Not available"),
+            _buildListTile('Invoice Number',
+                _extractedData?.invoiceNumber ?? "Not available"),
+            _buildListTile('Currency Code',
+                _extractedData?.currencyCode ?? "Not available"),
+            _buildListTile('Tax',
+                _extractedData?.tax?.toStringAsFixed(2) ?? "Not available"),
+            _buildListTile(
+                'Category', _extractedData?.category ?? "Not available"),
+            _buildListTile('Image File Name',
+                _extractedData?.imgFileName ?? "Not available"),
+            _buildListTile(
+                'Reference', _extractedData?.reference ?? "Not available"),
+            _buildListTile(
+                'Created Date', _extractedData?.createdDate ?? "Not available"),
+            _buildListTile('Thumbnail Url',
+                _extractedData?.imgThumbNail ?? "Not available",
+                isUrl: true),
+            _buildListTile(
+                'Image Url', _extractedData?.imgUrl ?? "Not available",
+                isUrl: true),
+            _buildListTile('Pdf Url', _extractedData?.pdfUrl ?? "Not available",
+                isUrl: true),
+            _buildListTile(
+                'Store Number', _extractedData?.storeNumber ?? "Not available"),
           ],
         ),
       ),
     );
   }
 
-
-  Widget _buildListTile(String title, String value) {
+  Widget _buildListTile(String title, String value, {bool isUrl = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 11.0),
       child: Row(
@@ -427,59 +572,105 @@ class _MyHomePageState extends State<MyHomePage>
             flex: 2,
             child: Text(
               title,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: Color(0xFF171C3A)),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           Expanded(
             flex: 3,
-            child: Text(
-              value,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.right,
-            ),
+            child: isUrl
+                ? SelectableText(
+                    value,
+                    style: const TextStyle(color: Color(0xFF171C3A)),
+                    textAlign: TextAlign.right,
+                  )
+                : Text(
+                    value,
+                    overflow: TextOverflow.visible,
+                    textAlign: TextAlign.right,
+                  ),
           ),
         ],
       ),
     );
   }
 
-
-
   Widget _buildJsonDataView() {
     if (_eventData.isEmpty) {
       return const Center(child: Text('No JSON data'));
     }
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return SingleChildScrollView(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: constraints.maxWidth,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: JsonShrinkWidget(
-                  style: const JsonShrinkStyle(
-                      textStyle: TextStyle(color: Colors.black),
-                      keyStyle: TextStyle(color: Colors.black),
-                      numberStyle: TextStyle(color: Colors.black),
-                      boolStyle: TextStyle(color: Colors.black),
-                      symbolStyle: TextStyle()
-                  ),
-                  json: _eventData,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+
+    Map<String, dynamic> jsonMap = json.decode(json.encode(_eventData));
+
+    List<TextSpan> spans = _createSpans(jsonMap);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: RichText(
+        text: TextSpan(
+          children: spans,
+          style: const TextStyle(color: Colors.black, fontSize: 14.0),
+        ),
+      ),
     );
   }
 
+  List<TextSpan> _createSpans(dynamic value, {String indent = ''}) {
+    List<TextSpan> spans = [];
 
+    if (value is Map<String, dynamic>) {
+      spans.add(
+          const TextSpan(text: '{\n', style: TextStyle(color: Colors.black)));
+      value.forEach((key, val) {
+        spans.add(TextSpan(
+            text: '$indent  "$key": ',
+            style: const TextStyle(color: Colors.black)));
+        spans.addAll(_createSpans(val, indent: '$indent  '));
+        spans.add(
+            const TextSpan(text: ',\n', style: TextStyle(color: Colors.black)));
+      });
+      spans.add(TextSpan(
+          text: '$indent}', style: const TextStyle(color: Colors.black)));
+    } else if (value is List) {
+      spans.add(
+          const TextSpan(text: '[\n', style: TextStyle(color: Colors.black)));
+      for (var val in value) {
+        spans.addAll(_createSpans(val, indent: '$indent  '));
+        spans.add(
+            const TextSpan(text: ',\n', style: TextStyle(color: Colors.black)));
+      }
+      spans.add(TextSpan(
+          text: '$indent]', style: const TextStyle(color: Colors.black)));
+    } else {
+      spans.add(_formatValueSpan(value));
+    }
+
+    return spans;
+  }
+
+  TextSpan _formatValueSpan(dynamic value) {
+    Color color;
+    String text;
+
+    if (value is String) {
+      color = const Color(0xFF00AA00);
+      text = '"$value"';
+    } else if (value is int) {
+      color = Colors.red;
+      text = value.toString();
+    } else if (value is bool) {
+      color = Colors.red;
+      text = value.toString();
+    } else if (value is double) {
+      color = Colors.orange;
+      text = value.toString();
+    } else {
+      color = Colors.grey;
+      text = value.toString();
+    }
+
+    return TextSpan(text: text, style: TextStyle(color: color));
+  }
 
   Widget _buildLoadingScreen() {
     return Container(
@@ -491,7 +682,8 @@ class _MyHomePageState extends State<MyHomePage>
             SizedBox(
                 height: 120,
                 child: Image.asset('assets/ic_veryfi_logo_black.PNG')),
-            const Text('Please wait.. reading document.', style: TextStyle(fontSize: 20)),
+            const Text('Please wait.. reading document.',
+                style: TextStyle(fontSize: 20,color: Color(0xFF171C3A))),
             Lottie.asset('assets/loading_animation.json'),
           ],
         ),
@@ -514,21 +706,19 @@ class ExtractedData {
   String? pdfUrl;
   String? storeNumber;
 
-
-  ExtractedData({
-    this.id,
-    this.invoiceNumber,
-    this.currencyCode,
-    this.tax,
-    this.category,
-    this.imgFileName,
-    this.reference,
-    this.createdDate,
-    this.imgThumbNail,
-    this.imgUrl,
-    this.pdfUrl,
-    this.storeNumber
-  });
+  ExtractedData(
+      {this.id,
+      this.invoiceNumber,
+      this.currencyCode,
+      this.tax,
+      this.category,
+      this.imgFileName,
+      this.reference,
+      this.createdDate,
+      this.imgThumbNail,
+      this.imgUrl,
+      this.pdfUrl,
+      this.storeNumber});
 
   factory ExtractedData.fromJson(Map<String, dynamic> json) {
     return ExtractedData(

@@ -36,7 +36,6 @@ dependencies:
       url: https://[USERNAME]:[PASSWORD]@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git
       ref: 1.5.25
   lottie: ^2.7.0
-  json_shrink_widget: ^1.1.4
 
 
 
