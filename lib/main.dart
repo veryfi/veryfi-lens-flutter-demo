@@ -407,8 +407,8 @@ class _MyHomePageState extends State<MyHomePage>
             _buildListTile('Created Date', _extractedData?.createdDate ?? "Not available"),
             _buildListTile('Thumbnail Url', _extractedData?.imgThumbNail ?? "Not available"),
             _buildListTile('Image Url', _extractedData?.imgUrl ?? "Not available"),
-            _buildListTile('Pdf url', _extractedData?.pdfUrl ?? "Not available"),
-            _buildListTile('Reference Number', _extractedData?.referenceNumber ?? "Not available"),
+            _buildListTile('Pdf Url', _extractedData?.pdfUrl ?? "Not available"),
+            _buildListTile('Store Number', _extractedData?.storeNumber ?? "Not available"),
           ],
         ),
       ),
@@ -512,7 +512,7 @@ class ExtractedData {
   String? imgThumbNail;
   String? imgUrl;
   String? pdfUrl;
-  String? referenceNumber;
+  String? storeNumber;
 
 
   ExtractedData({
@@ -527,7 +527,7 @@ class ExtractedData {
     this.imgThumbNail,
     this.imgUrl,
     this.pdfUrl,
-    this.referenceNumber
+    this.storeNumber
   });
 
   factory ExtractedData.fromJson(Map<String, dynamic> json) {
@@ -543,7 +543,7 @@ class ExtractedData {
       imgThumbNail: json['img_thumbnail_url'].toString(),
       imgUrl: json['img_url'].toString(),
       pdfUrl: json['pdf_url'].toString(),
-      referenceNumber: json['reference_number'].toString(),
+      storeNumber: json['store_number'].toString(),
     );
   }
 }
