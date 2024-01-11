@@ -340,47 +340,45 @@ class _MyHomePageState extends State<MyHomePage>
             color: Colors.white,
             elevation: 10,
             borderRadius: BorderRadius.circular(7.0),
-            child: SizedBox(
-              height: 530,
-              child: ListView(
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        'Solutions',
-                        style: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF171C3A)),
-                      ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Importante para ajustar al contenido
+              children: [
+                const SizedBox(height: 20.0,),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      'Solutions',
+                      style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF171C3A)),
                     ),
                   ),
-                  ...menuOptions.map((option) => Padding(
-                        padding: EdgeInsets.zero,
-                        child: ListTile(
-                          dense: true,
-                          leading: Icon(
-                            option['icon'],
-                            size: 24.0,
-                            color: const Color(0xFF171C3A),
-                          ),
-                          title: Text(
-                            option['title'],
-                            style: const TextStyle(
-                                fontSize: 14.0, color: Color(0xFF171C3A)),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.settings, size: 27.0,color: Color(0xFF171C3A),),
-                            onPressed: _showSettingsPanel,
-                          ),
-                          onTap: () => onShowCameraPressed(option['title']),
-                        ),
-                      )),
-                ],
-              ),
+                ),
+                ...menuOptions.map((option) => Padding(
+                  padding: EdgeInsets.zero,
+                  child: ListTile(
+                    dense: true,
+                    leading: Icon(
+                      option['icon'],
+                      size: 24.0,
+                      color: const Color(0xFF171C3A),
+                    ),
+                    title: Text(
+                      option['title'],
+                      style: const TextStyle(
+                          fontSize: 14.0, color: Color(0xFF171C3A)),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.settings, size: 27.0, color: Color(0xFF171C3A)),
+                      onPressed: _showSettingsPanel,
+                    ),
+                    onTap: () => onShowCameraPressed(option['title']),
+                  ),
+                )),
+              ],
             ),
           ),
         ),
