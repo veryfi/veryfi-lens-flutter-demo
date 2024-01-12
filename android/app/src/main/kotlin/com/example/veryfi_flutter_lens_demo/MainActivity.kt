@@ -1,4 +1,4 @@
-package com.veryfi.flutter_example
+package com.example.veryfi_flutter_lens_demo
 
 import io.flutter.embedding.android.FlutterActivity
 
