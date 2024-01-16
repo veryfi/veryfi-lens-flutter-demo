@@ -38,12 +38,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-
   bool showVeryfiResults = false;
   ExtractedData? _extractedData;
   bool _isLoading = false;
   late TabController _tabController;
   Map<String, dynamic> _eventData = {};
+  StreamSubscription<Map<String, dynamic>>? _streamSubscription;
 
   Map<String, bool> preferences = Utils.getPreferences();
 
@@ -59,16 +59,21 @@ class _MyHomePageState extends State<MyHomePage>
     initPlatformState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_handleTabSelection);
+
+    _streamSubscription = Veryfi.analyticsStream.listen((analyticsEvent) {
+      print("Lens analytics events:  ${analyticsEvent}");
+    });
+    Veryfi.observeAnalyticsEvents();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _streamSubscription?.cancel();
     super.dispose();
   }
 
   Future<void> initPlatformState() async {
-
     Map<String, dynamic> credentials = Utils.getCredentials();
 
     try {
@@ -195,12 +200,12 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   void onShowCameraPressed(String documentType) async {
-
     Map<String, dynamic> credentials = Utils.getCredentials();
 
     var documentTypeResult = Utils.getSettingsForDocumentType(documentType);
 
-    Map<String, dynamic> settings = Utils.getSettings(preferences, documentTypeResult);
+    Map<String, dynamic> settings =
+        Utils.getSettings(preferences, documentTypeResult);
 
     setState(() {
       Veryfi.initLens(credentials, settings);
