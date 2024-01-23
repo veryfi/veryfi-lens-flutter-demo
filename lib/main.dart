@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:veryfi/lens.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:veryfi_flutter_lens_demo/models/analytics_event.dart';
+import 'package:veryfi_flutter_lens_demo/widgets/ui/analytics.dart';
 import 'package:veryfi_flutter_lens_demo/widgets/ui/json_viewer.dart';
 import 'widgets/ui/home_menu.dart';
 import 'widgets/ui/loading.dart';
@@ -42,7 +44,8 @@ class _MyHomePageState extends State<MyHomePage>
   ExtractedData? _extractedData;
   bool _isLoading = false;
   late TabController _tabController;
-  Map<String, dynamic> _eventData = {};
+  final Map<String, dynamic> _eventData = {};
+  final List<AnalyticsEvent> _analytics = [];
   StreamSubscription<Map<String, dynamic>>? _streamSubscription;
 
   Map<String, bool> preferences = Utils.getPreferences();
@@ -57,11 +60,15 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     initPlatformState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabSelection);
 
     _streamSubscription = Veryfi.analyticsStream.listen((analyticsEvent) {
-      print("Lens analytics events:  ${analyticsEvent}");
+      AnalyticsEvent event = AnalyticsEvent(
+          name: analyticsEvent["event"],
+          params: analyticsEvent["params"]
+      );
+      _analytics.add(event);
     });
     Veryfi.observeAnalyticsEvents();
   }
@@ -152,6 +159,10 @@ class _MyHomePageState extends State<MyHomePage>
                     Expanded(
                       child: _buildButton(1, 'Json'),
                     ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _buildButton(2, 'Analytics'),
+                    ),
                   ],
                 ),
               ),
@@ -164,6 +175,7 @@ class _MyHomePageState extends State<MyHomePage>
               children: [
                 ExtractedDataWidget(_extractedData),
                 JsonViewer(_eventData),
+                AnalyticsWidget(_analytics)
               ],
             ),
           ),
@@ -225,6 +237,7 @@ class _MyHomePageState extends State<MyHomePage>
           : MainMenuWidget(
               onShowCameraPressed: onShowCameraPressed,
               showSettingsPanel: _showSettingsPanel),
+
     );
   }
 
