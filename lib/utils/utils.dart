@@ -1,6 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
 class Utils {
   static String getSettingsForDocumentType(String documentType) {
     switch (documentType) {
@@ -33,7 +32,8 @@ class Utils {
     }
   }
 
-  static Map<String, dynamic> getSettings(Map<String, bool> preferences, String documentTypeResult) {
+  static Map<String, dynamic> getSettings(
+      Map<String, bool> preferences, String documentTypeResult) {
     return {
       'blurDetectionIsOn': preferences['Blur detection'],
       'showDocumentTypes': preferences['Show document types'],
@@ -47,6 +47,7 @@ class Utils {
           preferences['Allow submit document capture'],
       'zoomIsOn': preferences['Zoom'],
       'switchCameraIsOn': preferences['Switch Camera'],
+      'enableScreenshots': preferences['Enable Screenshots'],
       'documentTypes': [documentTypeResult]
     };
   }
@@ -72,6 +73,7 @@ class Utils {
       'Allow submit undetected docs': true,
       'Allow submit document capture': false,
       'Switch Camera': false,
+      'Enable Screenshots': true,
       'Zoom': false,
     };
   }
