@@ -97,36 +97,28 @@ class _MyHomePageState extends State<MyHomePage>
 
   void handleVeryfiEvent(LensEvent eventType, Map<String, dynamic> response) {
     setState(() {
-      String eventName = eventType.toString().split('.').last;
-      _eventData[eventName] ??= [];
-      _eventData[eventName].add({
-        'status': response['status'],
-        'msg': response['msg'],
-        'data': response['data'],
-      });
+      _eventData["events"] ??= [];
+      _eventData["events"].add(response);
       showVeryfiResults = true;
     });
-
     if (eventType == LensEvent.update) {
-      var status = response['status'];
-      if (status == 'start') {
-        setState(() => _isLoading = true);
-      } else if (status == 'removed') {
-        setState(() => _isLoading = false);
+      if (response['status'] == "start") {
+        setState(() {
+          _isLoading = true;
+        });
       }
-    } else if (eventType == LensEvent.success) {
+    }
+  if (eventType == LensEvent.success) {
       setState(() {
         _extractedData =
             ExtractedData.fromJson(Map<String, dynamic>.from(response['data']));
+        _isLoading = false;
       });
-    } else if (eventType == LensEvent.close) {
-      var queueCount = response['queue_count'] ?? 0;
-      if (queueCount == 0) {
-        setState(() {
-          _isLoading = false;
-          showVeryfiResults = false;
-        });
-      }
+    }
+    if (eventType == LensEvent.error) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
