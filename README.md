@@ -39,7 +39,7 @@ export MAVEN_VERYFI_PASSWORD=[PASSWORD]
 
 - Note: The wrapper supports the following Flutter SDK versions:
 ```
-flutter: ">=1.20.0"
+flutter: ">=3.19.3"
 ```
 
 
