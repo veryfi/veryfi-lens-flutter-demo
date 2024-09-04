@@ -48,7 +48,8 @@ class Utils {
       'zoomIsOn': preferences['Zoom'],
       'switchCameraIsOn': preferences['Switch Camera'],
       'enableScreenshots': preferences['Enable Screenshots'],
-      'documentTypes': [documentTypeResult]
+      'documentTypes': [documentTypeResult],
+      'defaultSelectedDocumentType': documentTypeResult
     };
   }
 
