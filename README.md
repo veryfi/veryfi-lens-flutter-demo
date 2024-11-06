@@ -35,8 +35,14 @@ export MAVEN_VERYFI_PASSWORD=[PASSWORD]
 - Go `pubspec.yml` and go to the `veryfi` on the dependencies section:
 - Find the line `https://[USERNAME]:[PASSWORD]@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git`
 - Replace [USERNAME] and [PASSWORD] with the credentials that were set up in the previous step.
-- Fetch the dependencies using your IDE or run `flutter pub get`
-
+- Clean the project (**IMPORTANT: Always clean the project after updating the Veryfi Lens Flutter plugin version**, otherwise, the project might not compile):
+```
+flutter clean
+```
+- Fetch the dependencies using your IDE or run:
+```
+flutter pub get
+```
 - Note: The wrapper supports the following Flutter SDK versions:
 ```
 flutter: ">=3.19.3"
