@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.veryfi.flutter_example">
+    package="com.example.veryfi_flutter_lens_demo">
    <application
         android:label="Flutter Lens Demo"
         android:icon="@mipmap/ic_launcher">
