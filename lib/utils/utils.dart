@@ -49,7 +49,8 @@ class Utils {
       'switchCameraIsOn': preferences['Switch Camera'],
       'enableScreenshots': preferences['Enable Screenshots'],
       'documentTypes': [documentTypeResult],
-      'defaultSelectedDocumentType': documentTypeResult
+      'defaultSelectedDocumentType': documentTypeResult,
+      'ignoreRemoteSettings': preferences['Ignore remote settings']
     };
   }
 
@@ -76,6 +77,7 @@ class Utils {
       'Switch Camera': false,
       'Enable Screenshots': true,
       'Zoom': false,
+      'Ignore remote settings': true
     };
   }
 }
