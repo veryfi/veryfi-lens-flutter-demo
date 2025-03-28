@@ -34,7 +34,7 @@ dependencies:
   veryfi:
     git:
       url: https://[USERNAME]:[PASSWORD]@repo.veryfi.com/shared/lens/flutter-plugin-veryfi-lens.git
-      ref: 2.0.10
+      ref: 2.0.15
   lottie: ^2.7.0
 
 
