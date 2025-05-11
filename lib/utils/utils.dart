@@ -50,7 +50,14 @@ class Utils {
       'enableScreenshots': preferences['Enable Screenshots'],
       'documentTypes': [documentTypeResult],
       'defaultSelectedDocumentType': documentTypeResult,
-      'ignoreRemoteSettings': preferences['Ignore remote settings']
+      'ignoreRemoteSettings': preferences['Ignore remote settings'],
+      'ocrType':'caps',
+      'ocrRadius':30,
+      'dataExtractionEngine':'api',
+      'autoTagDeviceId':true,
+      'autoTagLensVersion':true,
+      'autoTagPlatform':true,
+      'tags':[]
     };
   }
 
