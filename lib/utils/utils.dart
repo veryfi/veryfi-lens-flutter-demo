@@ -52,7 +52,7 @@ class Utils {
       'defaultSelectedDocumentType': documentTypeResult,
       'ignoreRemoteSettings': preferences['Ignore remote settings'],
       'ocrType':'caps',
-      'ocrRadius':30,
+      'ocrRadius':85,
       'dataExtractionEngine':'api',
       'autoTagDeviceId':true,
       'autoTagLensVersion':true,
