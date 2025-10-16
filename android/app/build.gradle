@@ -41,10 +41,6 @@ android {
         dataBinding = true
     }
 
-    androidResources {
-        noCompress += "veryfi"
-    }
-
 }
 
 flutter {
