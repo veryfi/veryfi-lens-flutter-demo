@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "veryfi-lens-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://repo.veryfi.com/shared/lens/veryfi-lens-spm.git",
+      "state" : {
+        "revision" : "e5860e6f61660d3cc265f107e95bd3eb04878ecd",
+        "version" : "3.0.19"
+      }
+    }
+  ],
+  "version" : 2
+}
